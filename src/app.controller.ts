@@ -3,10 +3,12 @@ import { AppService } from "./app.service";
 
 @Controller()
 export class AppController {
-	constructor(private readonly appService: AppService) {}
+	constructor(private appService: AppService) {}
 
-	@Get()
+	@Get("users")
 	getAll(): string {
 		return this.appService.getHello();
 	}
+
+	// todo 3 : Add route handlers that use the service methods to manipulate the data container
 }
