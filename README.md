@@ -13,7 +13,7 @@ So i followed [some steps](https://dev.to/micalevisk/5-steps-to-create-a-bare-mi
 - When I created the `AppService` class, I forgot to add the `@Injectable()` decorator, which caused NestJS to throw an error when trying to inject the service into the controller. Adding the decorator resolved the issue.
 - In the `AppModule`, I initially forgot to include the `AppController` in the `controllers` array. This oversight led to a 404 error when trying to access the root route. Adding the controller to the module fixed the problem ([thanks to Google](https://www.google.com)).
 
-> > - To configure the tsconfig.json file (_that is scaring me a bit_), I used **_AI_** to help me set it up correctly for a NestJS project. _BUT_ it generated some wrong settings. Like **"target": "ES2024"** that is not supported by NodeJS yet (for me). I had to change it to **"target": "ES2020"** to make it work.
+> - To configure the tsconfig.json file (_that is scaring me a bit_), I used **_AI_** to help me set it up correctly for a NestJS project. _BUT_ it generated some wrong settings. Like **"target": "ES2024"** that is not supported by NodeJS yet (for me). I had to change it to **"target": "ES2020"** to make it work.
 
 I got the app running successfully after fixing these issues !
 
