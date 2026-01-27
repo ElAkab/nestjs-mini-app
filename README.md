@@ -19,7 +19,7 @@ I got the app running successfully after fixing these issues !
 
 ## Running the Application
 
-To run the application, use the following command () :
+To run the application, use the following command :
 
 ```bash
 npm run start
