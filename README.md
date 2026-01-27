@@ -17,10 +17,30 @@ So i followed [some steps](https://dev.to/micalevisk/5-steps-to-create-a-bare-mi
 
 I got the app running successfully after fixing these issues !
 
-## Running the Application
+## CRUD Features Added
 
-To run the application, use the following command :
+After the initial setup, I implemented a basic in-memory CRUD system for user profiles. Here’s a quick rundown of the features and some gotchas I encountered:
 
-```bash
-npm run start
-```
+### Profile Model & Validation
+
+- Created a `ProfileDto` class with validation decorators using `class-validator`.
+- Added rules for username (3-20 chars), age (18-100), and an optional bio (max 200 chars).
+- Used UUIDs for profile IDs, generated server-side.
+
+### Service Layer
+
+- Built an `AppService` with methods to create, read, update, and delete profiles.
+- Ensured that the `id` field is always generated and never overwritten during updates (important for data integrity).
+- Used exceptions (`NotFoundException`, `HttpException`) for error handling (i'm know there is more to learn here).
+
+### Controller Layer
+
+- Set up RESTful endpoints for all CRUD operations under `/profiles`.
+- Used `@Body()` and `@Param()` decorators for proper request handling and validation.
+- For updates, switched to a dedicated `UpdateProfileDto` (using `PartialType`) so PATCH/PUT requests can update only the fields you want—no more validation errors on partial updates!
+
+### cURL Commands
+
+I could test the CRUD operations using a `requests.rest` file but i wanted to practice cURL commands in the terminal as well. I created a folder named `crud-operations-commands` with the appropriate commands.
+
+I also left some comments in the files to explain what each part does.
