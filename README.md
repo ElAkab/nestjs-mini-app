@@ -44,3 +44,16 @@ After the initial setup, I implemented a basic in-memory CRUD system for user pr
 I could test the CRUD operations using a `requests.rest` file but i wanted to practice cURL commands in the terminal as well. I created a folder named `crud-operations-commands` with the appropriate commands.
 
 I also left some comments in the files to explain what each part does.
+
+## Restructuring architecture
+
+After completing the CRUD features, I decided to restructure the project architecture to follow best practices and improve maintainability. To achieve this, I simply nested my profile-related files into a dedicated `profiles` module. Then, i replaced all the `App` default files (from the initial setup) into the root of `src` folder.
+
+After that, I needed to :
+
+- Rename some classes and files to reflect their new purpose
+- Update imports paths accordingly
+- Update the `profiles.module.ts` to include the controller and service
+- Finally, update the `app.module.ts` to import the `ProfilesModule` (at this point, i quickly realized the potential of modules in NestJS for organizing code)
+
+This restructuring not only made the codebase cleaner but also set a solid foundation for future scalability as more features are added.
