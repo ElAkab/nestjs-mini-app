@@ -13,6 +13,7 @@ exports.ProfileDto = void 0;
 const class_validator_1 = require("class-validator");
 class ProfileDto {
 }
+exports.ProfileDto = ProfileDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.Length)(3, 20),
@@ -29,5 +30,4 @@ __decorate([
     (0, class_validator_1.Length)(0, 200),
     __metadata("design:type", String)
 ], ProfileDto.prototype, "bio", void 0);
-exports.ProfileDto = ProfileDto;
 //# sourceMappingURL=profile.dto.js.map

@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { UUID } from "crypto";
 declare class ProfileDto {
     id?: UUID;

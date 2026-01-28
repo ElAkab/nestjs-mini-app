@@ -1,0 +1,29 @@
+# Create a new profile
+POST http://localhost:3000/profiles
+Content-Type: application/json
+
+{
+  "name": "Sponge Bob",
+  "email": "spongebob@example.com",
+  "age": 30,
+  "bio": "Software engineer and open source enthusiast."
+} 
+
+# Get all profiles
+GET http://localhost:3000/profiles
+
+# Get a specific profile by ID
+GET http://localhost:3000/profiles/{id}
+
+
+# Update an existing profile by ID
+PUT http://localhost:3000/profiles/{id}
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 31,
+}
+
+# Delete a profile by ID
+DELETE http://localhost:3000/profiles/{id}
