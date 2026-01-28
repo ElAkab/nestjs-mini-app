@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const profiles_service_1 = require("./profiles.service");
 const profile_dto_1 = require("./dto/profile.dto");
 const update_profile_dto_1 = require("./dto/update-profile.dto");
+const filter_profiles_dto_1 = require("./dto/filter-profiles.dto");
 let ProfilesController = class ProfilesController {
     constructor(profilesService) {
         this.profilesService = profilesService;
@@ -24,8 +25,8 @@ let ProfilesController = class ProfilesController {
     create(profile) {
         return this.profilesService.createProfile(profile);
     }
-    getAll() {
-        return this.profilesService.getProfiles();
+    getAll(filters) {
+        return this.profilesService.getProfiles(filters);
     }
     getById(id) {
         return this.profilesService.getProfileById(id);
@@ -50,8 +51,9 @@ __decorate([
 ], ProfilesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [filter_profiles_dto_1.FilterProfilesDto]),
     __metadata("design:returntype", Array)
 ], ProfilesController.prototype, "getAll", null);
 __decorate([

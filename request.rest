@@ -3,27 +3,29 @@ POST http://localhost:3000/profiles
 Content-Type: application/json
 
 {
-  "name": "Sponge Bob",
-  "email": "spongebob@example.com",
+  "username": "Sponge Bob",
   "age": 30,
-  "bio": "Software engineer and open source enthusiast."
+  "bio": "Software engineer and open source enthusiast.",
+  "vaccinated": true
 } 
 
-# Get all profiles
+### Get all profiles
 GET http://localhost:3000/profiles
 
-# Get a specific profile by ID
+### Get all profiles with query parameters
+GET http://localhost:3000/profiles?vaccinated=true&age=30
+
+### Get a specific profile by ID
 GET http://localhost:3000/profiles/{id}
 
-
-# Update an existing profile by ID
+### Update an existing profile by ID
 PUT http://localhost:3000/profiles/{id}
 Content-Type: application/json
 
 {
-  "name": "John Doe",
+  "username": "John Doe",
   "age": 31,
 }
 
-# Delete a profile by ID
-DELETE http://localhost:3000/profiles/{id}
+### Delete a profile by ID
+DELETE http://localhost:3000/profiles/a016faab-1c10-4800-9ead-3812b171ebbf

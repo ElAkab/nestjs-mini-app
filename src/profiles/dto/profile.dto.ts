@@ -1,4 +1,11 @@
-import { Length, IsString, IsNumber, Min, Max } from "class-validator";
+import {
+	IsString,
+	IsNumber,
+	IsBoolean,
+	Length,
+	Min,
+	Max,
+} from "class-validator";
 import { UUID } from "crypto";
 
 // Rules for ProfileDto validation :
@@ -21,6 +28,9 @@ class ProfileDto {
 	@IsString()
 	@Length(0, 200)
 	bio?: string;
+
+	@IsBoolean()
+	vaccinated?: boolean;
 }
 
 export { ProfileDto };

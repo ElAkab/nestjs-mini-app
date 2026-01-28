@@ -17,29 +17,34 @@ let ProfilesService = class ProfilesService {
                 username: "john_doe",
                 age: 30,
                 bio: "Software developer from NY",
+                vaccinated: true,
             },
             {
                 id: (0, crypto_1.randomUUID)(),
                 username: "jane_smith",
                 age: 25,
                 bio: "Graphic designer from LA",
+                vaccinated: false,
             },
             {
                 id: (0, crypto_1.randomUUID)(),
                 username: "sam_wilson",
                 age: 28,
+                vaccinated: true,
             },
             {
                 id: (0, crypto_1.randomUUID)(),
                 username: "lisa_brown",
                 age: 32,
                 bio: "Content writer from TX",
+                vaccinated: false,
             },
             {
                 id: (0, crypto_1.randomUUID)(),
                 username: "mike_jones",
                 age: 29,
                 bio: "Marketing specialist from FL",
+                vaccinated: true,
             },
         ];
     }
@@ -54,11 +59,25 @@ let ProfilesService = class ProfilesService {
         this.profiles = [newProfile, ...this.profiles];
         return newProfile;
     }
-    getProfiles() {
-        if (!this.profiles) {
+    getProfiles(filters) {
+        if (this.profiles.length === 0) {
             throw new common_1.NotFoundException("No profiles found");
         }
-        return this.profiles;
+        if (!filters) {
+            return this.profiles;
+        }
+        const vaccinated = filters.vaccinated === undefined
+            ? undefined
+            : filters.vaccinated === true || filters.vaccinated === "true";
+        const age = filters.age === undefined || filters.age === ""
+            ? undefined
+            : Number(filters.age);
+        const result = this.profiles.filter((p) => (vaccinated === undefined || p.vaccinated === vaccinated) &&
+            (age === undefined || (!isNaN(age) && p.age === age)));
+        if (result.length === 0) {
+            throw new common_1.NotFoundException("No profiles found with given filters");
+        }
+        return result;
     }
     getProfileById(id) {
         const profile = this.profiles.find((profile) => profile.id === id);

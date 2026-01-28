@@ -6,44 +6,48 @@ import {
 } from "@nestjs/common";
 import { ProfileDto } from "./dto/profile.dto";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
+import { FilterProfilesDto } from "./dto/filter-profiles.dto";
 import { randomUUID, UUID } from "crypto";
 
 @Injectable()
 export class ProfilesService {
-	// todo 1 : Create data container ->
 	profiles: ProfileDto[] = [
 		{
 			id: randomUUID(),
 			username: "john_doe",
 			age: 30,
 			bio: "Software developer from NY",
+			vaccinated: true,
 		},
 		{
 			id: randomUUID(),
 			username: "jane_smith",
 			age: 25,
 			bio: "Graphic designer from LA",
+			vaccinated: false,
 		},
 		{
 			id: randomUUID(),
 			username: "sam_wilson",
 			age: 28,
+			vaccinated: true,
 		},
 		{
 			id: randomUUID(),
 			username: "lisa_brown",
 			age: 32,
 			bio: "Content writer from TX",
+			vaccinated: false,
 		},
 		{
 			id: randomUUID(),
 			username: "mike_jones",
 			age: 29,
 			bio: "Marketing specialist from FL",
+			vaccinated: true,
 		},
 	];
 
-	// todo 2 : Add methods to manipulate data container (CRUD) ->
 	createProfile(profile: ProfileDto): ProfileDto {
 		if (!profile) {
 			throw new HttpException("Bad Request 🖕🏿", HttpStatus.BAD_REQUEST);
@@ -59,12 +63,36 @@ export class ProfilesService {
 		return newProfile;
 	}
 
-	getProfiles(): ProfileDto[] {
-		if (!this.profiles) {
+	getProfiles(filters?: FilterProfilesDto): ProfileDto[] {
+		if (this.profiles.length === 0) {
 			throw new NotFoundException("No profiles found");
 		}
 
-		return this.profiles;
+		if (!filters) {
+			return this.profiles;
+		}
+
+		const vaccinated =
+			filters.vaccinated === undefined
+				? undefined
+				: filters.vaccinated === true || filters.vaccinated === "true";
+
+		const age =
+			filters.age === undefined || filters.age === ""
+				? undefined
+				: Number(filters.age);
+
+		const result = this.profiles.filter(
+			(p) =>
+				(vaccinated === undefined || p.vaccinated === vaccinated) &&
+				(age === undefined || (!isNaN(age) && p.age === age)),
+		);
+
+		if (result.length === 0) {
+			throw new NotFoundException("No profiles found with given filters");
+		}
+
+		return result;
 	}
 
 	getProfileById(id: UUID): ProfileDto {

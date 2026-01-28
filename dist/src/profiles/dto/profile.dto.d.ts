@@ -4,5 +4,6 @@ declare class ProfileDto {
     username: string;
     age: number;
     bio?: string;
+    vaccinated?: boolean;
 }
 export { ProfileDto };

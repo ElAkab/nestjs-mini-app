@@ -30,4 +30,8 @@ __decorate([
     (0, class_validator_1.Length)(0, 200),
     __metadata("design:type", String)
 ], ProfileDto.prototype, "bio", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], ProfileDto.prototype, "vaccinated", void 0);
 //# sourceMappingURL=profile.dto.js.map

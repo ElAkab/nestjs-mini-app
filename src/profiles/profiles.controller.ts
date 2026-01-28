@@ -6,6 +6,7 @@ import {
 	Delete,
 	ParseUUIDPipe,
 	Param,
+	Query,
 	Body,
 } from "@nestjs/common";
 // ParseUUIDPipe is used to validate UUID parameters
@@ -13,6 +14,7 @@ import type { UUID } from "crypto";
 import { ProfilesService } from "./profiles.service";
 import { ProfileDto } from "./dto/profile.dto";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
+import { FilterProfilesDto } from "./dto/filter-profiles.dto";
 
 @Controller("profiles")
 export class ProfilesController {
@@ -24,11 +26,10 @@ export class ProfilesController {
 	}
 
 	@Get()
-	getAll(): ProfileDto[] {
-		return this.profilesService.getProfiles();
+	getAll(@Query() filters: FilterProfilesDto): ProfileDto[] {
+		return this.profilesService.getProfiles(filters);
 	}
 
-	// todo 3 : Add route handlers that use the service methods to manipulate the data container ->
 	// ! Not the best way to do it, better to use Param decorator
 	// @Get("profiles/:id")
 	// getById(id: UUID): ProfileDto {
