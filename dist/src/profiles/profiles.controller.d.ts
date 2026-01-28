@@ -9,7 +9,7 @@ export declare class ProfilesController {
     create(profile: ProfileDto): ProfileDto;
     getAll(filters: FilterProfilesDto): ProfileDto[];
     getById(id: UUID): ProfileDto;
-    delete(id: UUID): number;
-    deleteAll(): number;
+    delete(id: UUID): void;
+    deleteAll(): void;
     update(id: UUID, profile: UpdateProfileDto): ProfileDto;
 }

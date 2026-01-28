@@ -8,6 +8,8 @@ import {
 	Param,
 	Query,
 	Body,
+	HttpCode,
+	HttpStatus,
 } from "@nestjs/common";
 // ParseUUIDPipe is used to validate UUID parameters
 import type { UUID } from "crypto";
@@ -42,12 +44,14 @@ export class ProfilesController {
 	}
 
 	@Delete(":id")
-	delete(@Param("id", ParseUUIDPipe) id: UUID): number {
+	@HttpCode(HttpStatus.NO_CONTENT)
+	delete(@Param("id", ParseUUIDPipe) id: UUID): void {
 		return this.profilesService.deleteProfile(id);
 	}
 
 	@Delete()
-	deleteAll(): number {
+	@HttpCode(HttpStatus.NO_CONTENT)
+	deleteAll(): void {
 		return this.profilesService.clearProfiles();
 	}
 

@@ -26,6 +26,16 @@ __decorate([
     __metadata("design:type", Number)
 ], ProfileDto.prototype, "age", void 0);
 __decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.Length)(0, 100),
+    __metadata("design:type", String)
+], ProfileDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Length)(8, 50),
+    __metadata("design:type", String)
+], ProfileDto.prototype, "password", void 0);
+__decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.Length)(0, 200),
     __metadata("design:type", String)

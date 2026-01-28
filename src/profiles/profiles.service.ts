@@ -1,13 +1,16 @@
 import {
 	Injectable,
 	NotFoundException,
+	BadRequestException,
 	HttpException,
 	HttpStatus,
 } from "@nestjs/common";
 import { ProfileDto } from "./dto/profile.dto";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
 import { FilterProfilesDto } from "./dto/filter-profiles.dto";
-import { randomUUID, UUID } from "crypto";
+import { randomUUID } from "crypto";
+
+type ProfileId = string;
 
 @Injectable()
 export class ProfilesService {
@@ -18,6 +21,8 @@ export class ProfilesService {
 			age: 30,
 			bio: "Software developer from NY",
 			vaccinated: true,
+			email: "john_doe@example.com",
+			password: "johnPass!2024",
 		},
 		{
 			id: randomUUID(),
@@ -25,12 +30,16 @@ export class ProfilesService {
 			age: 25,
 			bio: "Graphic designer from LA",
 			vaccinated: false,
+			email: "jane_smith@example.com",
+			password: "janeSecure#88",
 		},
 		{
 			id: randomUUID(),
 			username: "sam_wilson",
 			age: 28,
 			vaccinated: true,
+			email: "sam_wilson@example.com",
+			password: "samW!lson2023",
 		},
 		{
 			id: randomUUID(),
@@ -38,6 +47,8 @@ export class ProfilesService {
 			age: 32,
 			bio: "Content writer from TX",
 			vaccinated: false,
+			email: "lisa_brown@example.com",
+			password: "lisaBrown*321",
 		},
 		{
 			id: randomUUID(),
@@ -45,12 +56,14 @@ export class ProfilesService {
 			age: 29,
 			bio: "Marketing specialist from FL",
 			vaccinated: true,
+			email: "mike_jones@example.com",
+			password: "mikeJ2024!@",
 		},
 	];
 
 	createProfile(profile: ProfileDto): ProfileDto {
 		if (!profile) {
-			throw new HttpException("Bad Request 🖕🏿", HttpStatus.BAD_REQUEST);
+			throw new BadRequestException("Profile data is required");
 		}
 
 		// this.profiles.push(profile);
@@ -67,10 +80,18 @@ export class ProfilesService {
 		if (this.profiles.length === 0) {
 			throw new NotFoundException("No profiles found");
 		}
-
-		if (!filters) {
-			return this.profiles;
+		const result = this.applyFilters(this.profiles, filters);
+		if (result.length === 0) {
+			throw new NotFoundException("No profiles found with given filters");
 		}
+		return result;
+	}
+
+	private applyFilters(
+		profiles: ProfileDto[],
+		filters?: FilterProfilesDto,
+	): ProfileDto[] {
+		if (!filters) return profiles;
 
 		const vaccinated =
 			filters.vaccinated === undefined
@@ -82,20 +103,14 @@ export class ProfilesService {
 				? undefined
 				: Number(filters.age);
 
-		const result = this.profiles.filter(
+		return profiles.filter(
 			(p) =>
 				(vaccinated === undefined || p.vaccinated === vaccinated) &&
 				(age === undefined || (!isNaN(age) && p.age === age)),
 		);
-
-		if (result.length === 0) {
-			throw new NotFoundException("No profiles found with given filters");
-		}
-
-		return result;
 	}
 
-	getProfileById(id: UUID): ProfileDto {
+	getProfileById(id: ProfileId): ProfileDto {
 		const profile = this.profiles.find((profile) => profile.id === id);
 
 		if (!profile) {
@@ -107,7 +122,7 @@ export class ProfilesService {
 		return profile;
 	}
 
-	updateProfile(id: string, body: UpdateProfileDto): ProfileDto {
+	updateProfile(id: ProfileId, body: UpdateProfileDto): ProfileDto {
 		const index = this.profiles.findIndex((profile) => profile.id === id);
 
 		if (index === -1)
@@ -123,7 +138,7 @@ export class ProfilesService {
 		return this.profiles[index];
 	}
 
-	deleteProfile(id: string): number {
+	deleteProfile(id: string): void {
 		const profile = this.profiles.find((profile) => profile.id === id);
 
 		if (!profile)
@@ -134,11 +149,9 @@ export class ProfilesService {
 		const index = this.profiles.indexOf(profile);
 
 		this.profiles.splice(index, 1);
-		return HttpStatus.NO_CONTENT;
 	}
 
-	clearProfiles(): number {
+	clearProfiles(): void {
 		this.profiles = [];
-		return HttpStatus.NO_CONTENT;
 	}
 }

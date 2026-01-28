@@ -65,16 +65,18 @@ __decorate([
 ], ProfilesController.prototype, "getById", null);
 __decorate([
     (0, common_1.Delete)(":id"),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)("id", common_1.ParseUUIDPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Number)
+    __metadata("design:returntype", void 0)
 ], ProfilesController.prototype, "delete", null);
 __decorate([
     (0, common_1.Delete)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Number)
+    __metadata("design:returntype", void 0)
 ], ProfilesController.prototype, "deleteAll", null);
 __decorate([
     (0, common_1.Put)(":id"),

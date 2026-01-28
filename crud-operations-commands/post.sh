@@ -4,4 +4,11 @@
 # -d : Specifies the data to send in the request body (the new profile information in JSON format)
 curl -X POST http://localhost:3000/profiles \
 -H "Content-Type: application/json" \
--d '{"username":"Garry","age":28,"bio":"Adventurer from Wonderland"}'
+-d '{
+  "username": "Sponge Bob",
+  "age": 30,
+  "bio": "Software engineer and open source enthusiast.",
+  "vaccinated": true,
+  "email": "spongebob@example.com",
+  "password": "spongePass!2024"
+}'

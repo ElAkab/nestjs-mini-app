@@ -6,8 +6,10 @@ Content-Type: application/json
   "username": "Sponge Bob",
   "age": 30,
   "bio": "Software engineer and open source enthusiast.",
-  "vaccinated": true
-} 
+  "vaccinated": true,
+  "email": "spongebob@example.com",
+  "password": "spongePass!2024"
+}
 
 ### Get all profiles
 GET http://localhost:3000/profiles

@@ -3,6 +3,8 @@ declare class ProfileDto {
     id?: UUID;
     username: string;
     age: number;
+    email: string;
+    password: string;
     bio?: string;
     vaccinated?: boolean;
 }

@@ -18,6 +18,8 @@ let ProfilesService = class ProfilesService {
                 age: 30,
                 bio: "Software developer from NY",
                 vaccinated: true,
+                email: "john_doe@example.com",
+                password: "johnPass!2024",
             },
             {
                 id: (0, crypto_1.randomUUID)(),
@@ -25,12 +27,16 @@ let ProfilesService = class ProfilesService {
                 age: 25,
                 bio: "Graphic designer from LA",
                 vaccinated: false,
+                email: "jane_smith@example.com",
+                password: "janeSecure#88",
             },
             {
                 id: (0, crypto_1.randomUUID)(),
                 username: "sam_wilson",
                 age: 28,
                 vaccinated: true,
+                email: "sam_wilson@example.com",
+                password: "samW!lson2023",
             },
             {
                 id: (0, crypto_1.randomUUID)(),
@@ -38,6 +44,8 @@ let ProfilesService = class ProfilesService {
                 age: 32,
                 bio: "Content writer from TX",
                 vaccinated: false,
+                email: "lisa_brown@example.com",
+                password: "lisaBrown*321",
             },
             {
                 id: (0, crypto_1.randomUUID)(),
@@ -45,12 +53,14 @@ let ProfilesService = class ProfilesService {
                 age: 29,
                 bio: "Marketing specialist from FL",
                 vaccinated: true,
+                email: "mike_jones@example.com",
+                password: "mikeJ2024!@",
             },
         ];
     }
     createProfile(profile) {
         if (!profile) {
-            throw new common_1.HttpException("Bad Request 🖕🏿", common_1.HttpStatus.BAD_REQUEST);
+            throw new common_1.BadRequestException("Profile data is required");
         }
         const newProfile = {
             id: (0, crypto_1.randomUUID)(),
@@ -63,21 +73,23 @@ let ProfilesService = class ProfilesService {
         if (this.profiles.length === 0) {
             throw new common_1.NotFoundException("No profiles found");
         }
-        if (!filters) {
-            return this.profiles;
+        const result = this.applyFilters(this.profiles, filters);
+        if (result.length === 0) {
+            throw new common_1.NotFoundException("No profiles found with given filters");
         }
+        return result;
+    }
+    applyFilters(profiles, filters) {
+        if (!filters)
+            return profiles;
         const vaccinated = filters.vaccinated === undefined
             ? undefined
             : filters.vaccinated === true || filters.vaccinated === "true";
         const age = filters.age === undefined || filters.age === ""
             ? undefined
             : Number(filters.age);
-        const result = this.profiles.filter((p) => (vaccinated === undefined || p.vaccinated === vaccinated) &&
+        return profiles.filter((p) => (vaccinated === undefined || p.vaccinated === vaccinated) &&
             (age === undefined || (!isNaN(age) && p.age === age)));
-        if (result.length === 0) {
-            throw new common_1.NotFoundException("No profiles found with given filters");
-        }
-        return result;
     }
     getProfileById(id) {
         const profile = this.profiles.find((profile) => profile.id === id);
@@ -103,11 +115,9 @@ let ProfilesService = class ProfilesService {
             throw new common_1.NotFoundException(`${common_1.HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
         const index = this.profiles.indexOf(profile);
         this.profiles.splice(index, 1);
-        return common_1.HttpStatus.NO_CONTENT;
     }
     clearProfiles() {
         this.profiles = [];
-        return common_1.HttpStatus.NO_CONTENT;
     }
 };
 exports.ProfilesService = ProfilesService;
