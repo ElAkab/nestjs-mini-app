@@ -57,3 +57,28 @@ After that, I needed to :
 - Finally, update the `app.module.ts` to import the `ProfilesModule` (at this point, i quickly realized the potential of modules in NestJS for organizing code)
 
 This restructuring not only made the codebase cleaner but also set a solid foundation for future scalability as more features are added.
+
+## Authentication Module
+
+To work on authentication features, I created a `users` module with its own controller and service. At first (before adding JWT), I implemented a simple user registration and login functionalities, ensuring that passwords are securely hashed before storage.
+
+## Storage
+
+This project is basically made to learn NestJS from scratch. But while I’m at it, I might as well learn to use a well-known ORM properly. So I carefully followed [Prisma’s official documentation](https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres) to use it with [PostgreSQL](https://www.postgresql.org/) _(an approach I’ve explored recently)_.
+
+I set up the database schema, generated the Prisma client, and integrated it into the NestJS services for both profiles and users. This allows for persistent storage of data, moving beyond the initial in-memory implementation.
+
+## Relationships between Profiles and Users
+
+To establish a relationship between profiles and users, I modified the Prisma schema to include a foreign key in the `Profile` model that references the `User` model. This way, each profile is associated with a specific user.
+
+I handled the relationship in the service layer by ensuring that when a user is created, a corresponding profile (with default values) is also created and linked via the foreign key.
+
+> _I needed to pass some Profile DTOs as optional parameters during user creation to facilitate this linkage._
+
+## JWT Integration
+
+After setting up the basic user authentication, I integrated JWT (JSON Web Tokens) to generate tokens upon successful login.
+
+After struggling a bit with the setup, I managed to configure the `JwtModule` in the `UsersModule`, ensuring that the secret key is securely loaded from environment variables using the `ConfigModule`.
+_Thanks to AI for this step (shame on me)._

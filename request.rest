@@ -1,14 +1,48 @@
-# Create a new profile
+#=== USERS REQUEST ===#
+### Get all users
+GET http://localhost:3000/users
+
+### Create a new user
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "email": "patrick@example.com",
+  "password": "strongPassword123"
+}
+
+### User login
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "email": "patrick@example.com",
+  "password": "strongPassword123"
+}
+
+### User delete
+DELETE http://localhost:3000/users/4
+
+### User login
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "email": "patrick@example.com",
+  "password": "strongPassword123"
+}
+
+#=== PROFILES REQUEST ===#
+### Create a new profile
 POST http://localhost:3000/profiles
 Content-Type: application/json
 
 {
-  "username": "Sponge Bob",
+  "userId": 1,
+  "username": "SpongeBob",
   "age": 30,
   "bio": "Software engineer and open source enthusiast.",
-  "vaccinated": true,
-  "email": "spongebob@example.com",
-  "password": "spongePass!2024"
+  "vaccinated": true
 }
 
 ### Get all profiles
@@ -30,4 +64,4 @@ Content-Type: application/json
 }
 
 ### Delete a profile by ID
-DELETE http://localhost:3000/profiles/a016faab-1c10-4800-9ead-3812b171ebbf
+DELETE http://localhost:3000/profiles/1

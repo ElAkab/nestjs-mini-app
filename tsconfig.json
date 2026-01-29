@@ -1,12 +1,16 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"useDefineForClassFields": false,
+		"module": "Node16",
+		"moduleResolution": "node16",
+		"target": "ES2023",
+		"strict": true,
+		"esModuleInterop": true,
 		"declaration": true,
 		"removeComments": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"target": "ES2020",
 		"sourceMap": true,
 		"outDir": "./dist",
 		"rootDir": "./",

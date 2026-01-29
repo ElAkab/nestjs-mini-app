@@ -1,15 +1,11 @@
-import { ProfileDto } from "./dto/profile.dto";
-import { UpdateProfileDto } from "./dto/update-profile.dto";
-import { FilterProfilesDto } from "./dto/filter-profiles.dto";
-type ProfileId = string;
+import { ProfileDto } from "./dto/profile.dto.js";
+import { UpdateProfileDto } from "./dto/update-profile.dto.js";
+import { FilterProfilesDto } from "./dto/filter-profiles.dto.js";
 export declare class ProfilesService {
-    profiles: ProfileDto[];
-    createProfile(profile: ProfileDto): ProfileDto;
-    getProfiles(filters?: FilterProfilesDto): ProfileDto[];
-    private applyFilters;
-    getProfileById(id: ProfileId): ProfileDto;
-    updateProfile(id: ProfileId, body: UpdateProfileDto): ProfileDto;
-    deleteProfile(id: string): void;
-    clearProfiles(): void;
+    createProfile(profile: ProfileDto): Promise<ProfileDto>;
+    getProfiles(filters?: FilterProfilesDto): Promise<ProfileDto[]>;
+    getProfileById(id: number): Promise<ProfileDto>;
+    updateProfile(id: number, body: UpdateProfileDto): Promise<ProfileDto>;
+    deleteProfile(id: number): Promise<void>;
+    clearProfiles(): Promise<void>;
 }
-export {};

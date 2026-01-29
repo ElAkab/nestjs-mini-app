@@ -9,6 +9,4 @@ curl -X POST http://localhost:3000/profiles \
   "age": 30,
   "bio": "Software engineer and open source enthusiast.",
   "vaccinated": true,
-  "email": "spongebob@example.com",
-  "password": "spongePass!2024"
 }'

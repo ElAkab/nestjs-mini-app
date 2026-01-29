@@ -1,11 +1,7 @@
-import { UUID } from "crypto";
-declare class ProfileDto {
-    id?: UUID;
+export declare class ProfileDto {
     username: string;
-    age: number;
-    email: string;
-    password: string;
+    age?: number;
     bio?: string;
     vaccinated?: boolean;
+    userId: number;
 }
-export { ProfileDto };

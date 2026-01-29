@@ -1,127 +1,97 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProfilesService = void 0;
-const common_1 = require("@nestjs/common");
-const crypto_1 = require("crypto");
+import { Injectable, NotFoundException, BadRequestException, HttpStatus, } from "@nestjs/common";
+import { prisma } from "../lib/prisma.js";
 let ProfilesService = class ProfilesService {
-    constructor() {
-        this.profiles = [
-            {
-                id: (0, crypto_1.randomUUID)(),
-                username: "john_doe",
-                age: 30,
-                bio: "Software developer from NY",
-                vaccinated: true,
-                email: "john_doe@example.com",
-                password: "johnPass!2024",
-            },
-            {
-                id: (0, crypto_1.randomUUID)(),
-                username: "jane_smith",
-                age: 25,
-                bio: "Graphic designer from LA",
-                vaccinated: false,
-                email: "jane_smith@example.com",
-                password: "janeSecure#88",
-            },
-            {
-                id: (0, crypto_1.randomUUID)(),
-                username: "sam_wilson",
-                age: 28,
-                vaccinated: true,
-                email: "sam_wilson@example.com",
-                password: "samW!lson2023",
-            },
-            {
-                id: (0, crypto_1.randomUUID)(),
-                username: "lisa_brown",
-                age: 32,
-                bio: "Content writer from TX",
-                vaccinated: false,
-                email: "lisa_brown@example.com",
-                password: "lisaBrown*321",
-            },
-            {
-                id: (0, crypto_1.randomUUID)(),
-                username: "mike_jones",
-                age: 29,
-                bio: "Marketing specialist from FL",
-                vaccinated: true,
-                email: "mike_jones@example.com",
-                password: "mikeJ2024!@",
-            },
-        ];
-    }
-    createProfile(profile) {
+    async createProfile(profile) {
         if (!profile) {
-            throw new common_1.BadRequestException("Profile data is required");
+            throw new BadRequestException("Profile data is required");
         }
-        const newProfile = {
-            id: (0, crypto_1.randomUUID)(),
+        const { username, bio, vaccinated, userId } = profile;
+        if (!username || !userId)
+            throw new BadRequestException("Username, and userId are required fields");
+        const existingProfile = await prisma.profile.findUnique({
+            where: { userId: userId },
+        });
+        if (existingProfile)
+            throw new BadRequestException(`Profile for userId ${userId} already exists`);
+        const newProfile = await prisma.profile.create({
+            data: {
+                username: username,
+                bio: null,
+                age: null,
+                vaccinated: false,
+                userId: userId,
+            },
+        });
+        return {
+            ...newProfile,
+            age: newProfile.age ?? 0,
+            bio: newProfile.bio ?? undefined,
+        };
+    }
+    async getProfiles(filters) {
+        const where = {};
+        if (filters) {
+            if (filters.vaccinated !== undefined) {
+                where.vaccinated =
+                    filters.vaccinated === true || filters.vaccinated === "true";
+            }
+            if (filters.age !== undefined && filters.age !== "") {
+                where.age = Number(filters.age);
+            }
+        }
+        const profiles = await prisma.profile.findMany({ where });
+        if (profiles.length === 0) {
+            throw new NotFoundException("No profiles found with given filters");
+        }
+        return profiles.map((profile) => ({
             ...profile,
-        };
-        this.profiles = [newProfile, ...this.profiles];
-        return newProfile;
+            age: profile.age ?? 0,
+            bio: profile.bio ?? undefined,
+        }));
     }
-    getProfiles(filters) {
-        if (this.profiles.length === 0) {
-            throw new common_1.NotFoundException("No profiles found");
-        }
-        const result = this.applyFilters(this.profiles, filters);
-        if (result.length === 0) {
-            throw new common_1.NotFoundException("No profiles found with given filters");
-        }
-        return result;
-    }
-    applyFilters(profiles, filters) {
-        if (!filters)
-            return profiles;
-        const vaccinated = filters.vaccinated === undefined
-            ? undefined
-            : filters.vaccinated === true || filters.vaccinated === "true";
-        const age = filters.age === undefined || filters.age === ""
-            ? undefined
-            : Number(filters.age);
-        return profiles.filter((p) => (vaccinated === undefined || p.vaccinated === vaccinated) &&
-            (age === undefined || (!isNaN(age) && p.age === age)));
-    }
-    getProfileById(id) {
-        const profile = this.profiles.find((profile) => profile.id === id);
+    async getProfileById(id) {
+        const profile = await prisma.profile.findUnique({ where: { id } });
         if (!profile) {
-            throw new common_1.NotFoundException(`${common_1.HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
+            throw new NotFoundException(`${HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
         }
-        return profile;
+        return { ...profile, age: profile.age ?? 0, bio: profile.bio ?? undefined };
     }
-    updateProfile(id, body) {
-        const index = this.profiles.findIndex((profile) => profile.id === id);
-        if (index === -1)
-            throw new common_1.NotFoundException(`${common_1.HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
-        this.profiles[index] = {
-            ...this.profiles[index],
-            ...body,
-            id: this.profiles[index].id,
-        };
-        return this.profiles[index];
+    async updateProfile(id, body) {
+        try {
+            const updatedProfile = await prisma.profile.update({
+                where: { id },
+                data: body,
+            });
+            return {
+                ...updatedProfile,
+                age: updatedProfile.age ?? 0,
+                bio: updatedProfile.bio ?? undefined,
+            };
+        }
+        catch (error) {
+            throw new NotFoundException(`${HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
+        }
     }
-    deleteProfile(id) {
-        const profile = this.profiles.find((profile) => profile.id === id);
-        if (!profile)
-            throw new common_1.NotFoundException(`${common_1.HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
-        const index = this.profiles.indexOf(profile);
-        this.profiles.splice(index, 1);
+    async deleteProfile(id) {
+        try {
+            await prisma.profile.delete({ where: { id } });
+        }
+        catch (error) {
+            throw new NotFoundException(`${HttpStatus.NOT_FOUND}: Profile with id ${id} not found`);
+        }
     }
-    clearProfiles() {
-        this.profiles = [];
+    async clearProfiles() {
+        await prisma.profile.deleteMany();
     }
 };
-exports.ProfilesService = ProfilesService;
-exports.ProfilesService = ProfilesService = __decorate([
-    (0, common_1.Injectable)()
+ProfilesService = __decorate([
+    Injectable()
 ], ProfilesService);
+export { ProfilesService };
 //# sourceMappingURL=profiles.service.js.map

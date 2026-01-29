@@ -2,116 +2,82 @@ import {
 	Injectable,
 	NotFoundException,
 	BadRequestException,
-	HttpException,
 	HttpStatus,
 } from "@nestjs/common";
-import { ProfileDto } from "./dto/profile.dto";
-import { UpdateProfileDto } from "./dto/update-profile.dto";
-import { FilterProfilesDto } from "./dto/filter-profiles.dto";
-import { randomUUID } from "crypto";
-
-type ProfileId = string;
+import { ProfileDto } from "./dto/profile.dto.js";
+import { UpdateProfileDto } from "./dto/update-profile.dto.js";
+import { FilterProfilesDto } from "./dto/filter-profiles.dto.js";
+import { prisma } from "../lib/prisma.js";
 
 @Injectable()
 export class ProfilesService {
-	profiles: ProfileDto[] = [
-		{
-			id: randomUUID(),
-			username: "john_doe",
-			age: 30,
-			bio: "Software developer from NY",
-			vaccinated: true,
-			email: "john_doe@example.com",
-			password: "johnPass!2024",
-		},
-		{
-			id: randomUUID(),
-			username: "jane_smith",
-			age: 25,
-			bio: "Graphic designer from LA",
-			vaccinated: false,
-			email: "jane_smith@example.com",
-			password: "janeSecure#88",
-		},
-		{
-			id: randomUUID(),
-			username: "sam_wilson",
-			age: 28,
-			vaccinated: true,
-			email: "sam_wilson@example.com",
-			password: "samW!lson2023",
-		},
-		{
-			id: randomUUID(),
-			username: "lisa_brown",
-			age: 32,
-			bio: "Content writer from TX",
-			vaccinated: false,
-			email: "lisa_brown@example.com",
-			password: "lisaBrown*321",
-		},
-		{
-			id: randomUUID(),
-			username: "mike_jones",
-			age: 29,
-			bio: "Marketing specialist from FL",
-			vaccinated: true,
-			email: "mike_jones@example.com",
-			password: "mikeJ2024!@",
-		},
-	];
+	// Plus de tableau local, tout passe par Prisma
 
-	createProfile(profile: ProfileDto): ProfileDto {
+	async createProfile(profile: ProfileDto): Promise<ProfileDto> {
 		if (!profile) {
 			throw new BadRequestException("Profile data is required");
 		}
 
-		// this.profiles.push(profile);
-		const newProfile: ProfileDto = {
-			id: randomUUID(),
-			...profile,
-		};
+		const { username, bio, vaccinated, userId } = profile;
 
-		this.profiles = [newProfile, ...this.profiles];
-		return newProfile;
+		if (!username || !userId)
+			throw new BadRequestException("Username, and userId are required fields");
+
+		const existingProfile = await prisma.profile.findUnique({
+			where: { userId: userId },
+		});
+		// findUnique() : Finds a single record that matches the unique constraint
+
+		if (existingProfile)
+			throw new BadRequestException(
+				`Profile for userId ${userId} already exists`,
+			);
+
+		const newProfile = await prisma.profile.create({
+			data: {
+				username: username,
+				bio: null,
+				age: null,
+				vaccinated: false,
+				userId: userId,
+			},
+		});
+
+		return {
+			...newProfile,
+			age: newProfile.age ?? 0,
+			bio: newProfile.bio ?? undefined,
+		};
 	}
 
-	getProfiles(filters?: FilterProfilesDto): ProfileDto[] {
-		if (this.profiles.length === 0) {
-			throw new NotFoundException("No profiles found");
+	async getProfiles(filters?: FilterProfilesDto): Promise<ProfileDto[]> {
+		const where: any = {};
+
+		if (filters) {
+			if (filters.vaccinated !== undefined) {
+				where.vaccinated =
+					filters.vaccinated === true || filters.vaccinated === "true";
+			}
+			if (filters.age !== undefined && filters.age !== "") {
+				where.age = Number(filters.age);
+			}
 		}
-		const result = this.applyFilters(this.profiles, filters);
-		if (result.length === 0) {
+
+		const profiles = await prisma.profile.findMany({ where });
+
+		if (profiles.length === 0) {
 			throw new NotFoundException("No profiles found with given filters");
 		}
-		return result;
+
+		return profiles.map((profile) => ({
+			...profile,
+			age: profile.age ?? 0,
+			bio: profile.bio ?? undefined,
+		}));
 	}
 
-	private applyFilters(
-		profiles: ProfileDto[],
-		filters?: FilterProfilesDto,
-	): ProfileDto[] {
-		if (!filters) return profiles;
-
-		const vaccinated =
-			filters.vaccinated === undefined
-				? undefined
-				: filters.vaccinated === true || filters.vaccinated === "true";
-
-		const age =
-			filters.age === undefined || filters.age === ""
-				? undefined
-				: Number(filters.age);
-
-		return profiles.filter(
-			(p) =>
-				(vaccinated === undefined || p.vaccinated === vaccinated) &&
-				(age === undefined || (!isNaN(age) && p.age === age)),
-		);
-	}
-
-	getProfileById(id: ProfileId): ProfileDto {
-		const profile = this.profiles.find((profile) => profile.id === id);
+	async getProfileById(id: number): Promise<ProfileDto> {
+		const profile = await prisma.profile.findUnique({ where: { id } });
 
 		if (!profile) {
 			throw new NotFoundException(
@@ -119,39 +85,38 @@ export class ProfilesService {
 			);
 		}
 
-		return profile;
+		return { ...profile, age: profile.age ?? 0, bio: profile.bio ?? undefined };
 	}
 
-	updateProfile(id: ProfileId, body: UpdateProfileDto): ProfileDto {
-		const index = this.profiles.findIndex((profile) => profile.id === id);
-
-		if (index === -1)
+	async updateProfile(id: number, body: UpdateProfileDto): Promise<ProfileDto> {
+		try {
+			const updatedProfile = await prisma.profile.update({
+				where: { id },
+				data: body,
+			});
+			return {
+				...updatedProfile,
+				age: updatedProfile.age ?? 0,
+				bio: updatedProfile.bio ?? undefined,
+			};
+		} catch (error) {
 			throw new NotFoundException(
 				`${HttpStatus.NOT_FOUND}: Profile with id ${id} not found`,
 			);
-		// Toujours préserver l'id d'origine
-		this.profiles[index] = {
-			...this.profiles[index],
-			...body,
-			id: this.profiles[index].id,
-		};
-		return this.profiles[index];
+		}
 	}
 
-	deleteProfile(id: string): void {
-		const profile = this.profiles.find((profile) => profile.id === id);
-
-		if (!profile)
+	async deleteProfile(id: number): Promise<void> {
+		try {
+			await prisma.profile.delete({ where: { id } });
+		} catch (error) {
 			throw new NotFoundException(
 				`${HttpStatus.NOT_FOUND}: Profile with id ${id} not found`,
 			);
-
-		const index = this.profiles.indexOf(profile);
-
-		this.profiles.splice(index, 1);
+		}
 	}
 
-	clearProfiles(): void {
-		this.profiles = [];
+	async clearProfiles(): Promise<void> {
+		await prisma.profile.deleteMany();
 	}
 }

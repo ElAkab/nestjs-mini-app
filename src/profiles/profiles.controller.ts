@@ -4,7 +4,7 @@ import {
 	Get,
 	Put,
 	Delete,
-	ParseUUIDPipe,
+	// ParseUUIDPipe,
 	Param,
 	Query,
 	Body,
@@ -12,23 +12,23 @@ import {
 	HttpStatus,
 } from "@nestjs/common";
 // ParseUUIDPipe is used to validate UUID parameters
-import type { UUID } from "crypto";
-import { ProfilesService } from "./profiles.service";
-import { ProfileDto } from "./dto/profile.dto";
-import { UpdateProfileDto } from "./dto/update-profile.dto";
-import { FilterProfilesDto } from "./dto/filter-profiles.dto";
+// import type { UUID } from "crypto";
+import { ProfilesService } from "./profiles.service.js";
+import { ProfileDto } from "./dto/profile.dto.js";
+import { UpdateProfileDto } from "./dto/update-profile.dto.js";
+import { FilterProfilesDto } from "./dto/filter-profiles.dto.js";
 
 @Controller("profiles")
 export class ProfilesController {
 	constructor(private profilesService: ProfilesService) {}
 
 	@Post()
-	create(@Body() profile: ProfileDto): ProfileDto {
+	async create(@Body() profile: ProfileDto): Promise<ProfileDto> {
 		return this.profilesService.createProfile(profile);
 	}
 
 	@Get()
-	getAll(@Query() filters: FilterProfilesDto): ProfileDto[] {
+	async getAll(@Query() filters: FilterProfilesDto): Promise<ProfileDto[]> {
 		return this.profilesService.getProfiles(filters);
 	}
 
@@ -39,27 +39,27 @@ export class ProfilesController {
 	// }
 
 	@Get(":id")
-	getById(@Param("id", ParseUUIDPipe) id: UUID): ProfileDto {
+	async getById(@Param("id") id: number): Promise<ProfileDto> {
 		return this.profilesService.getProfileById(id);
 	}
 
 	@Delete(":id")
 	@HttpCode(HttpStatus.NO_CONTENT)
-	delete(@Param("id", ParseUUIDPipe) id: UUID): void {
+	async delete(@Param("id") id: number): Promise<void> {
 		return this.profilesService.deleteProfile(id);
 	}
 
 	@Delete()
 	@HttpCode(HttpStatus.NO_CONTENT)
-	deleteAll(): void {
+	async deleteAll(): Promise<void> {
 		return this.profilesService.clearProfiles();
 	}
 
 	@Put(":id")
-	update(
-		@Param("id", ParseUUIDPipe) id: UUID,
+	async update(
+		@Param("id") id: number,
 		@Body() profile: UpdateProfileDto,
-	): ProfileDto {
+	): Promise<ProfileDto> {
 		return this.profilesService.updateProfile(id, profile);
 	}
 }

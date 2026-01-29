@@ -1,15 +1,14 @@
-import type { UUID } from "crypto";
-import { ProfilesService } from "./profiles.service";
-import { ProfileDto } from "./dto/profile.dto";
-import { UpdateProfileDto } from "./dto/update-profile.dto";
-import { FilterProfilesDto } from "./dto/filter-profiles.dto";
+import { ProfilesService } from "./profiles.service.js";
+import { ProfileDto } from "./dto/profile.dto.js";
+import { UpdateProfileDto } from "./dto/update-profile.dto.js";
+import { FilterProfilesDto } from "./dto/filter-profiles.dto.js";
 export declare class ProfilesController {
     private profilesService;
     constructor(profilesService: ProfilesService);
-    create(profile: ProfileDto): ProfileDto;
-    getAll(filters: FilterProfilesDto): ProfileDto[];
-    getById(id: UUID): ProfileDto;
-    delete(id: UUID): void;
-    deleteAll(): void;
-    update(id: UUID, profile: UpdateProfileDto): ProfileDto;
+    create(profile: ProfileDto): Promise<ProfileDto>;
+    getAll(filters: FilterProfilesDto): Promise<ProfileDto[]>;
+    getById(id: number): Promise<ProfileDto>;
+    delete(id: number): Promise<void>;
+    deleteAll(): Promise<void>;
+    update(id: number, profile: UpdateProfileDto): Promise<ProfileDto>;
 }

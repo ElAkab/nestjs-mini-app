@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,40 +7,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProfileDto = void 0;
-const class_validator_1 = require("class-validator");
-class ProfileDto {
+import { IsString, IsNumber, IsBoolean, Length, Min, Max, IsOptional, } from "class-validator";
+export class ProfileDto {
 }
-exports.ProfileDto = ProfileDto;
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(3, 20),
+    IsString(),
+    Length(3, 20),
     __metadata("design:type", String)
 ], ProfileDto.prototype, "username", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(18),
-    (0, class_validator_1.Max)(100),
+    IsNumber(),
+    Min(18),
+    Max(100),
     __metadata("design:type", Number)
 ], ProfileDto.prototype, "age", void 0);
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.Length)(0, 100),
-    __metadata("design:type", String)
-], ProfileDto.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(8, 50),
-    __metadata("design:type", String)
-], ProfileDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(0, 200),
+    IsString(),
+    Length(0, 200),
+    IsOptional(),
     __metadata("design:type", String)
 ], ProfileDto.prototype, "bio", void 0);
 __decorate([
-    (0, class_validator_1.IsBoolean)(),
+    IsBoolean(),
+    IsOptional(),
     __metadata("design:type", Boolean)
 ], ProfileDto.prototype, "vaccinated", void 0);
+__decorate([
+    IsNumber(),
+    __metadata("design:type", Number)
+], ProfileDto.prototype, "userId", void 0);
 //# sourceMappingURL=profile.dto.js.map

@@ -5,41 +5,36 @@ import {
 	Length,
 	Min,
 	Max,
-	IsEmail,
+	IsOptional,
 } from "class-validator";
-import { UUID } from "crypto";
 
-// Rules for ProfileDto validation :
-// - username : string, 3-20 characters
-// - age : number, min 18, max 100
-// - bio : string, optional, max 200 characters
+// ProfileDto : infos publiques ou personnalisées de l'utilisateur
+export class ProfileDto {
+	// @IsOptional()
+	// @IsString()
+	// id?: string;
 
-class ProfileDto {
-	id?: UUID;
+	// @IsString()
+	// userId!: string; // référence vers l'utilisateur (clé étrangère)
 
 	@IsString()
 	@Length(3, 20)
-	username: string;
+	username!: string;
 
 	@IsNumber()
 	@Min(18)
 	@Max(100)
-	age: number;
-
-	@IsEmail() // optional email field with validation
-	@Length(0, 100)
-	email: string;
-
-	@IsString()
-	@Length(8, 50)
-	password: string; // optional password field
+	age?: number;
 
 	@IsString()
 	@Length(0, 200)
+	@IsOptional()
 	bio?: string;
 
 	@IsBoolean()
+	@IsOptional()
 	vaccinated?: boolean;
-}
 
-export { ProfileDto };
+	@IsNumber()
+	userId!: number;
+}
