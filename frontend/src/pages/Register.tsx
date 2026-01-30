@@ -1,8 +1,75 @@
+// import { useNavigate } from "react-router-dom";
+import InputField from "../components/InputField";
+import Button from "../components/Button";
+import { useForm, type SubmitHandler } from "react-hook-form";
+
+type Inputs = {
+	email: string;
+	password: string;
+};
+
 export default function Register() {
+	const { register, handleSubmit, watch } = useForm<Inputs>();
+
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		console.log(data);
+		// navigate("/dashboard");
+
+		const email = data.email;
+		const password = data.password;
+
+		if (!email || !password) {
+			alert("Please enter both email and password.");
+			return;
+		}
+
+		if (password.length < 6) {
+			alert("Password must be at least 6 characters long.");
+			return;
+		}
+
+		// Simulate registration logic here
+		alert(`Registered with Email: ${email} and Password: ${password}`);
+
+		// Show the registered email and password in the console
+		// console.log(
+		// 	"Registering user with email:",
+		// 	email,
+		// 	"and password:",
+		// 	password,
+		// );
+	};
+
+	console.log(watch("email")); // watch input value by passing the name of it
+
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
-			<h1 className="text-4xl font-bold text-blue-600 mb-3">Register Page</h1>
-			<p>This is the registration page.</p>
+			<form
+				className="flex flex-col gap-4 w-80 mt-6 border-2 border-gray-800 p-6 rounded-lg shadow-lg bg-white"
+				onSubmit={handleSubmit(onSubmit)}
+			>
+				<h1 className="text-4xl text-center font-bold text-blue-600 mb-3">
+					Register Page
+				</h1>
+				<hr />
+				<InputField
+					label="Email"
+					type="email"
+					placeholder="Enter your email"
+					required
+					{...register("email", { required: true })}
+				/>
+				<InputField
+					label="Password"
+					type="password"
+					placeholder="Enter your password"
+					required
+					{...register("password", { required: true })}
+				/>
+				<Button type="submit" className="mt-2">
+					Register
+				</Button>
+			</form>
 		</div>
 	);
 }
