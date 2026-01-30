@@ -82,3 +82,9 @@ After setting up the basic user authentication, I integrated JWT (JSON Web Token
 
 After struggling a bit with the setup, I managed to configure the `JwtModule` in the `UsersModule`, ensuring that the secret key is securely loaded from environment variables using the `ConfigModule`.
 _Thanks to AI for this step (shame on me)._
+
+## Frontend
+
+I decided to create a simple frontend using React to interact with the NestJS backend. The frontend allows users to register, log in, and manage their profiles through a user-friendly interface. I set up the React project with necessary components and pages, configured routing, configured Tailwind CSS for styling, and implemented API calls to the NestJS backend for authentication and profile management.
+
+> Note: The Tailwind CSS intellisense didn't work properly at first. After some research, I found out that needed to update `settings.json` file at the root of the frontend project solved the issue for me. ![`settings.json` : property 'className' added](image.png)
