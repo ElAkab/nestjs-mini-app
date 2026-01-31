@@ -2,7 +2,9 @@
 
 This is a simple NestJS application created as part of a learning exercise.
 
-## Configuration
+## =========== Backend ===========
+
+## NestJS Setup
 
 I could clone the official starter repository from NestJS to learn it but I want to build it from scratch to understand better how it works.
 
@@ -64,9 +66,11 @@ To work on authentication features, I created a `users` module with its own cont
 
 ## Storage
 
-This project is basically made to learn NestJS from scratch. But while I’m at it, I might as well learn to use a well-known ORM properly. So I carefully followed [Prisma’s official documentation](https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres) to use it with [PostgreSQL](https://www.postgresql.org/) _(an approach I’ve explored recently)_.
+This project is basically made to learn NestJS from scratch. But while I’m at it, I might as well learn to use a well-known ORM properly. So I carefully followed [Prisma’s official documentation](https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres) to use it with [PostgreSQL](https://www.postgresql.org/) _(an approach I’ve explored recently)_. Before Prisma, I implemented a Pipe to validate UUID formats in the profile module. However, after introducing Prisma to handle database interactions, I removed this custom validation since Prisma now manages the ID generation with auto-increment.
 
 I set up the database schema, generated the Prisma client, and integrated it into the NestJS services for both profiles and users. This allows for persistent storage of data, moving beyond the initial in-memory implementation.
+
+> I know, i could use [TypeORM](https://typeorm.io/) with NestJS but i wanted to try Prisma this time. It looks pretty straightforward to use and has good documentation.
 
 ## Relationships between Profiles and Users
 
@@ -83,8 +87,15 @@ After setting up the basic user authentication, I integrated JWT (JSON Web Token
 After struggling a bit with the setup, I managed to configure the `JwtModule` in the `UsersModule`, ensuring that the secret key is securely loaded from environment variables using the `ConfigModule`.
 _Thanks to AI for this step (shame on me)._
 
-## Frontend
+## ========== Frontend ===========
 
 I decided to create a simple frontend using React to interact with the NestJS backend. The frontend allows users to register, log in, and manage their profiles through a user-friendly interface. I set up the React project with necessary components and pages, configured routing, configured Tailwind CSS for styling, and implemented API calls to the NestJS backend for authentication and profile management.
 
 > Note: The Tailwind CSS intellisense didn't work properly at first. After some research, I found out that needed to update `settings.json` file at the root of the frontend project solved the issue for me. ![`settings.json` : property 'className' added](image.png)
+
+## React form handling
+
+For handling forms in the React frontend, I used the `react-hook-form` library. It provides a simple and efficient way to manage form state and validation. I created reusable input components and integrated them with `react-hook-form` to handle user registration and login forms. This setup allows for easy validation and submission of form data to the backend API.
+
+## Helpful Resources
+- [A Human’s Guide to Nest JS — 101](https://medium.com/@tejasparmar1826/a-humans-guide-to-nest-js-101-fa0e93a51f63)

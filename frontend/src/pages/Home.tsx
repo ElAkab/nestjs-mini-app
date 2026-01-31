@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
 	const [isActive, setIsActive] = useState(false);
+	const { isAuthenticated, logout } = useAuth();
 
 	const handleOnClick = () => {
 		console.log("button clicked");
@@ -11,7 +13,7 @@ export default function Home() {
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
 			<h1 className="text-4xl font-bold text-gray-800 text-center">
-				Welcome to a simple project! Dedicated to learning{" "}
+				Welcomz to a simple project! Dedicated to learning{" "}
 				<a
 					href="https://docs.nestjs.com/first-steps"
 					className="bg-linear-to-bl from-yellow-400 via-yellow-600 to-yellow-800 bg-clip-text text-transparent underline font-bold"
@@ -19,6 +21,14 @@ export default function Home() {
 					NestJS
 				</a>
 			</h1>
+			{isAuthenticated && (
+				<div>
+					<p className="mt-4 text-green-600 font-semibold">
+						You are connected !
+					</p>
+					<button onClick={logout}>logout</button>
+				</div>
+			)}
 
 			{/* Bouton stylé */}
 			<button

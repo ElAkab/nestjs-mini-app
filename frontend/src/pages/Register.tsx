@@ -1,7 +1,9 @@
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { signup } from "../api/auth";
+import axios from "axios";
 
 type Inputs = {
 	email: string;
@@ -10,8 +12,9 @@ type Inputs = {
 
 export default function Register() {
 	const { register, handleSubmit, watch } = useForm<Inputs>();
+	const navigate = useNavigate();
 
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		console.log(data);
 		// navigate("/dashboard");
 
@@ -28,8 +31,28 @@ export default function Register() {
 			return;
 		}
 
+		try {
+			const response = await signup(email, password);
+
+			// Axios -> la vraie data est dans response.data
+			console.log(response.data);
+
+			alert(`Registered! Welcome ${email.split("@")[0]}!`);
+			navigate("/login");
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				const message =
+					error.response?.data?.message ||
+					"Registration failed. Please try again.";
+
+				console.error("Registration failed:", error.response?.data);
+				alert(message);
+			} else {
+				console.error("Unexpected error:", error);
+				alert("Unexpected error occurred.");
+			}
+		}
 		// Simulate registration logic here
-		alert(`Registered with Email: ${email} and Password: ${password}`);
 
 		// Show the registered email and password in the console
 		// console.log(

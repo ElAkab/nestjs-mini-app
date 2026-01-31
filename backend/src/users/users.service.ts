@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+	Injectable,
+	NotFoundException,
+	BadRequestException,
+} from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto.js";
 import { UpdateUserDto } from "./dto/update-user.dto.js";
 import { prisma } from "../lib/prisma.js";
@@ -21,7 +25,7 @@ export class UsersService {
 		});
 
 		if (isUnique) {
-			throw new Error("Email already in use");
+			throw new BadRequestException("Email already in use");
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -68,9 +72,9 @@ export class UsersService {
 
 		// JWT Generation Logic. Create a payload with user info with : sub = subject as user id and email
 		const payload = { sub: user.id, email: user.email };
-		const token = await this.jwtService.signAsync(payload); // Generate JWT token
+		const token = await this.jwtService.signAsync(payload); // Generate JWT token. So the token will contain the user id and email. To get the user id later, we will do: const userId = payload.sub
 
-		return `Congratulations! You are authenticated ! Your token: ${token}`; // Return the JWT token
+		return token; // Return the JWT token
 	}
 
 	async findAll() {
@@ -92,25 +96,70 @@ export class UsersService {
 		return { ...user, hashed_password: undefined }; // Exclude password from returned user object
 	}
 
+	async getMyProfile(res: any) {
+		const token = res.req.cookies["token"];
+
+		if (!token) {
+			throw new NotFoundException("No token found");
+		}
+
+		// Verify the token and extract the payload
+		const payload = await this.jwtService.verifyAsync(token);
+
+		const userId = payload.sub;
+
+		const user = await prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+			include: {
+				profile: true, // Include the profile relation
+			},
+		});
+
+		if (!user) {
+			throw new NotFoundException(`User with id ${userId} not found :/...`);
+		}
+
+		return { ...user, hashed_password: undefined }; // Exclude password from returned user object
+	}
+
+	async logout(id: number, token: string) {
+		const user = await prisma.user.findUnique({
+			where: {
+				id: id,
+			},
+		});
+
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found :/...`);
+		}
+
+		// In a real application, you would handle token invalidation here.
+		// For example, by maintaining a token blacklist or changing a token version in the database.
+
+		return `User with id ${id} has been logged out (token invalidation not implemented).`;
+	}
+
 	async update(id: number, updateUserDto: UpdateUserDto) {
 		return `This action updates a #${id} user`;
 	}
 
 	async remove(id: number) {
-		   // Supprimer d'abord le profil lié (s'il existe)
-		   await prisma.profile.deleteMany({
-			   where: {
-				   userId: id,
-			   },
-		   });
+		// Supprimer d'abord le profil lié (s'il existe)
+		await prisma.profile.deleteMany({
+			where: {
+				userId: id,
+			},
+		});
 
-		   // Ensuite supprimer l'utilisateur
-		   const deletion = await prisma.user.delete({
-			   where: {
-				   id: id,
-			   },
-		   });
+		// Ensuite supprimer l'utilisateur
+		const deletion = await prisma.user.delete({
+			where: {
+				id: id,
+			},
+		});
 
-		   return deletion;
+		return deletion;
 	}
 }
