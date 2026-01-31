@@ -89,7 +89,9 @@ _Thanks to AI for this step (shame on me)._
 
 ## ========== Frontend ===========
 
-I decided to create a simple frontend using React to interact with the NestJS backend. The frontend allows users to register, log in, and manage their profiles through a user-friendly interface. I set up the React project with necessary components and pages, configured routing, configured Tailwind CSS for styling, and implemented API calls to the NestJS backend for authentication and profile management.
+## React Frontend Setup
+
+I decided to create a simple frontend using [React](https://reactjs.org/) to interact with the NestJS backend. The frontend allows users to register, log in, and manage their profiles through a user-friendly interface. I set up the React project with necessary components and pages, configured routing (with [React Router](https://reactrouter.com/)), configured [Tailwind CSS](https://tailwindcss.com/) for styling, and implemented API calls to the NestJS backend for authentication and profile management.
 
 > Note: The Tailwind CSS intellisense didn't work properly at first. After some research, I found out that needed to update `settings.json` file at the root of the frontend project solved the issue for me. ![`settings.json` : property 'className' added](image.png)
 
@@ -97,5 +99,30 @@ I decided to create a simple frontend using React to interact with the NestJS ba
 
 For handling forms in the React frontend, I used the `react-hook-form` library. It provides a simple and efficient way to manage form state and validation. I created reusable input components and integrated them with `react-hook-form` to handle user registration and login forms. This setup allows for easy validation and submission of form data to the backend API.
 
+## API Calls
+
+To interact with the NestJS backend, I used the [axios](https://axios-http.com/) library to make API calls from the React frontend. I created a dedicated API service module to encapsulate all API-related logic, including user registration and login. This module handles sending requests to the appropriate endpoints and processing responses.
+
+I also implemented error handling to provide feedback to users in case of failed requests.
+
+## Authentication Context
+
+To manage authentication state across the React application, I created an `AuthContext` using React's Context API. This context provides a way to share authentication-related data (such as the current user and authentication status) throughout the component tree without prop drilling.
+**But I realized that managing authentication state and side effects can get complex, so I implemented a custom hook `useAuth` to encapsulate this logic and make it easier to use throughout the app.**
+
+## Future Improvements
+
+I plan to enhance this project further by adding features such as:
+
+- More robust error handling and user feedback mechanisms
+- Implementing role-based access control for different user types
+- Writing unit and integration tests for both backend and frontend components
+- Managing Guards in NestJS for route protection
+
+## Conclusion _31/01/2026_
+
+This project has been a great learning experience for me to understand the fundamentals of NestJS, but also ORM (Prisma), React (with React Router and react-hook-form), Axios, and how to build a full-stack application with a React frontend. I look forward to continuing to improve and expand upon this project in the future. Even though I haven’t had the opportunity to use it extensively yet, my initial impression is that NestJS helps structure projects much more effectively. It’s therefore not surprising that it’s highly sought after by companies. This technology can very quickly make it easier for beginners to find their footing when working with a new codebase.
+
 ## Helpful Resources
+
 - [A Human’s Guide to Nest JS — 101](https://medium.com/@tejasparmar1826/a-humans-guide-to-nest-js-101-fa0e93a51f63)
